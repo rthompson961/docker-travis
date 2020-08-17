@@ -1,0 +1,24 @@
+framework:
+    workflows:
+      fruit:
+        type: state_machine
+        audit_trail:
+          enabled: "%kernel.debug%"
+        marking_store:
+          type: 'method'
+          property: 'state'
+        supports:
+          - App\Entity\Fruit
+        initial_marking: ready
+        places:
+          - ready
+          - checking
+          - spoilt
+          - ripe
+        transitions:
+          fail:
+            from: checking
+            to:   spoilt
+          pass:
+            from: checking
+            to:   ripe

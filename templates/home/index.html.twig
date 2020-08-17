@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+{% for f in fruit %}
+    <p class="{{ f.name }}">{{ f.name }} - {{ f.state }}</p>
+{% endfor %}
+{% endblock %}
