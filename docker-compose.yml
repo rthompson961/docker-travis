@@ -6,11 +6,11 @@ networks:
 services:
   my-running-php:
     container_name: my-running-php
-    build: .
+    image: "rthompson961/my-php-app:latest"
     networks:
       - lamp
-    volumes:
-      - /home/richard/work/my_docker_test:/var/www/html
+    #volumes:
+      #- /home/richard/work/my_docker_test:/var/www/html
     #ports:
       #- "8080:80"
     environment:
