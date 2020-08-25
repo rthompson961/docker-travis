@@ -4,34 +4,51 @@ networks:
     name: lamp
     driver: bridge
 services:
-  my-running-php:
-    container_name: my-running-php
-    image: "rthompson961/my-php-app:latest"
+  my-apache:
+    container_name: my-apache
+    build:
+      context: .
+      dockerfile: Dockerfile-apache
+    #image: "rthompson961/my-php-app:latest"
     networks:
       - lamp
-    #volumes:
-      #- /home/richard/work/my_docker_test:/var/www/html
-    #ports:
-      #- "8080:80"
+    volumes:
+      - $PWD:/var/www/html
+    ports:
+      - "80:80"
     environment:
-      - DATABASE_URL=mysql://root:root@my-running-mysql:3306/dockertest?serverVersion=5.7
-      - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@my-running-amqp:5672/%2f/messages
+      - DATABASE_URL=mysql://root:root@my-mysql:3306/dockertest?serverVersion=5.7
+      - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@my-amqp:5672/%2f/messages
     depends_on:
-      - my-running-mysql
-      - my-running-amqp
-  my-running-mysql:
-    container_name: my-running-mysql
+      - my-composer
+      - my-mysql
+      - my-amqp
+  my-mysql:
+    container_name: my-mysql
     image: "mysql:5.7"
     networks:
       - lamp
-    #ports:
-      #- "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-  my-running-amqp:
-    container_name: my-running-amqp
+  my-amqp:
+    container_name: my-amqp
     image: "rabbitmq:3.7-management"
     networks:
       - lamp
-    #ports:
-      #- "5672:5672"
+  my-composer:
+    container_name: my-composer
+    command: composer install
+    image: "composer:latest"
+    networks:
+      - lamp
+    volumes:
+      - $PWD:/app
+  my-cli:
+    container_name: my-cli
+    build:
+      context: .
+      dockerfile: Dockerfile-cli
+    networks:
+      - lamp
+    volumes:
+      - $PWD:/app
