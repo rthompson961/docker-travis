@@ -6,21 +6,21 @@ networks:
 services:
   my-apache:
     container_name: my-apache
-    build:
-      context: .
-      dockerfile: Dockerfile-apache
-    #image: "rthompson961/my-php-app:latest"
+    #build:
+      #context: .
+      #dockerfile: Dockerfile-apache
+    image: "rthompson961/my-apache:latest"
     networks:
       - lamp
-    volumes:
-      - $PWD:/var/www/html
+    #volumes:
+      #- $PWD:/var/www/html
     ports:
       - "80:80"
     environment:
       - DATABASE_URL=mysql://root:root@my-mysql:3306/dockertest?serverVersion=5.7
       - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@my-amqp:5672/%2f/messages
     depends_on:
-      - my-composer
+      #- my-composer
       - my-mysql
       - my-amqp
   my-mysql:
@@ -35,20 +35,21 @@ services:
     image: "rabbitmq:3.7-management"
     networks:
       - lamp
-  my-composer:
-    container_name: my-composer
-    command: composer install
-    image: "composer:latest"
-    networks:
-      - lamp
-    volumes:
-      - $PWD:/app
-  my-cli:
-    container_name: my-cli
-    build:
-      context: .
-      dockerfile: Dockerfile-cli
-    networks:
-      - lamp
-    volumes:
-      - $PWD:/app
+  #my-composer:
+    #container_name: my-composer
+    #command: composer install
+    #image: "composer:latest"
+    #networks:
+      #- lamp
+    #volumes:
+      #- $PWD:/app
+  #my-cli:
+    #container_name: my-cli
+    #image: "rthompson961/my-cli:latest"
+    #build:
+      #context: .
+      #dockerfile: Dockerfile-cli
+    #networks:
+      #- lamp
+    #volumes:
+      #- $PWD:/app

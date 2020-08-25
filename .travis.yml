@@ -4,9 +4,8 @@ language: php
 php: 7.4
 services:
   - docker
-  - mysql
 env:
-  DOCKER_COMPOSE_VERSION: 1.26.0
+  DOCKER_COMPOSE_VERSION: 1.26.2
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -14,16 +13,19 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - docker-compose -v
   - docker-compose up -d
-  - docker-compose rm -f my-cli
-before_script:
-  - composer install --no-interaction
+#before_script:
+  #- composer install --no-interaction
 script:
   #- ./bin/phpunit
-   - docker exec -it my-running-php pwd
-   - docker exec -it my-running-php ls
-   - docker exec -it my-running-php bin/console doctrine:database:create
-   - docker exec -it my-running-php bin/console doctrine:migrations:migrate -q
-   - docker exec -it my-running-php bin/console doctrine:fixtures:load -q
-   - docker exec -it my-running-php bin/phpunit
+   - docker exec -it my-apache pwd
+   - docker exec -it my-apache ls
+   #- docker exec -it my-php bin/console doctrine:database:create
+   - docker run -d --rm --network lamp rthompson961/my-cli bin/console doctrine:database:create
+   #- docker exec -it my-php bin/console doctrine:migrations:migrate -q
+   - docker run -d --rm --network lamp rthompson961/my-cli bin/console doctrine:migration:migrate -n
+   #- docker exec -it my-php bin/console doctrine:fixtures:load -q
+   - docker run -d --rm --network lamp rthompson961/my-cli bin/console doctrine:fixtures:load -n
+   #- docker exec -it my-php bin/phpunit
+   - docker run -d --rm --network lamp rthompson961/my-cli bin/phpunit
 after_script:
   - docker-compose down
