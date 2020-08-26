@@ -12,7 +12,7 @@ class HomeControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
-        $this->assertEquals(5, $crawler->filter('p')->count());
+        $this->assertEquals(4, $crawler->filter('p')->count());
         $this->assertSelectorTextSame('p.orange', 'orange - ready');
         $this->assertSelectorTextSame('p.apple', 'apple - ready');
         $this->assertSelectorTextSame('p.banana', 'banana - ready');

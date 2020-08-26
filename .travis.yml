@@ -1,5 +1,5 @@
 os: linux
-dist: focal
+dist: bionic
 language: php
 php: 7.4
 services:
@@ -7,25 +7,20 @@ services:
 env:
   DOCKER_COMPOSE_VERSION: 1.26.2
 before_install:
+  - sudo apt install librabbitmq-dev
+  - sudo printf "\n" | pecl install amqp
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose -v
   - docker-compose up -d
-#before_script:
-  #- composer install --no-interaction
+before_script:
+  - composer install --no-interaction
+  - bin/console doctrine:database:create
+  - bin/console doctrine:migrations:migrate -q
+  - bin/console doctrine:fixtures:load -q
 script:
-  #- ./bin/phpunit
-   - docker exec -it my-apache pwd
-   - docker exec -it my-apache ls
-   #- docker exec -it my-php bin/console doctrine:database:create
-   - docker run -d --rm --network lamp rthompson961/my-cli bin/console doctrine:database:create
-   #- docker exec -it my-php bin/console doctrine:migrations:migrate -q
-   - docker run -d --rm --network lamp rthompson961/my-cli bin/console doctrine:migration:migrate -n
-   #- docker exec -it my-php bin/console doctrine:fixtures:load -q
-   - docker run -d --rm --network lamp rthompson961/my-cli bin/console doctrine:fixtures:load -n
-   #- docker exec -it my-php bin/phpunit
-   - docker run -d --rm --network lamp rthompson961/my-cli bin/phpunit
+  - ./bin/phpunit
 after_script:
   - docker-compose down
